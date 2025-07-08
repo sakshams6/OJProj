@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-
 const problems = {
   '1': {
     title: 'Two Sum',
@@ -117,6 +116,7 @@ const problems = {
     explaination: 'The maximal rectangle with all 1s has area = 6.'
   }
 };
+  
 
 
 export default function ProblemSolve() {
@@ -126,6 +126,7 @@ export default function ProblemSolve() {
   const [code, setCode] = useState('');
   const [customInput, setCustomInput] = useState('');
   const [output, setOutput] = useState('');
+  const [language, setLanguage] = useState('cpp'); 
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -180,7 +181,11 @@ export default function ProblemSolve() {
 
   const runCode = async () => {
     try {
-      const res = await axios.post('http://localhost:5050/api/compile', { code, input: customInput });
+      const res = await axios.post('http://localhost:5050/api/compile', {
+        code,
+        input: customInput,
+        language
+      });
       setOutput(res.data.output);
     } catch (err) {
       console.error('Error running code:', err);
@@ -199,7 +204,7 @@ export default function ProblemSolve() {
 
       const res = await axios.post(
         'http://localhost:5050/api/submit',
-        { code, problemId: id },
+        { code, problemId: id, language},
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -288,6 +293,20 @@ export default function ProblemSolve() {
 
           <div className="md:w-1/2 p-6 md:p-10 bg-gray-800">
             <h2 className="text-xl font-semibold mb-2">🧑‍💻 Code Editor</h2>
+
+            {/* Language selector */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1 text-purple-300">Language:</label>
+              <select
+                className="bg-gray-900 border border-white/10 text-white px-3 py-2 rounded-lg focus:outline-none"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                <option value="cpp">C++</option>
+                <option value="python">Python</option>
+              </select>
+            </div>
+
             <textarea
               rows="20"
               className="w-full bg-black border border-white/10 rounded-xl p-4 text-white font-mono resize-none focus:outline-none focus:ring-2 focus:ring-purple-400/50"
