@@ -7,27 +7,35 @@ const path = require('path');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const { code, input = '' } = req.body;
+  const { code, input = '', language = 'cpp' } = req.body;
 
   if (!code) {
     return res.status(400).json({ success: false, msg: 'No code provided' });
   }
 
   const id = uuid();
-  const codePath = path.join(__dirname, '../temp', `${id}.cpp`);
-  const inputPath = path.join(__dirname, '../temp', `${id}.txt`);
-  const outputPath = path.join(__dirname, '../temp', `${id}.out`);
+  const tempDir = path.join(__dirname, '../temp');
+  const ext = language === 'python' ? 'py' : 'cpp';
+  const codePath = path.join(tempDir, `${id}.${ext}`);
+  const inputPath = path.join(tempDir, `${id}.txt`);
+  const outputPath = path.join(tempDir, `${id}.out`);
 
   try {
-    
     fs.writeFileSync(codePath, code);
     fs.writeFileSync(inputPath, input);
 
-    
-    const cmd = `g++ -std=c++11 ${codePath} -o ${outputPath} && ${outputPath} < ${inputPath}`;
+    let cmd;
 
-    exec(cmd, (error, stdout, stderr) => {
-      
+    if (language === 'cpp') {
+      cmd = `g++ -std=c++11 ${codePath} -o ${outputPath} && ${outputPath} < ${inputPath}`;
+    } else if (language === 'python') {
+      cmd = `python3 ${codePath} < ${inputPath}`;
+    } else {
+      return res.status(400).json({ success: false, msg: 'Unsupported language' });
+    }
+
+    exec(cmd, { timeout: 5000 }, (error, stdout, stderr) => {
+      // Clean up temp files
       [codePath, inputPath, outputPath].forEach((file) => {
         if (fs.existsSync(file)) fs.unlinkSync(file);
       });
@@ -40,6 +48,7 @@ router.post('/', async (req, res) => {
     });
 
   } catch (err) {
+    console.error('Execution Error:', err);
     res.status(500).json({ success: false, msg: 'Internal Server Error' });
   }
 });
