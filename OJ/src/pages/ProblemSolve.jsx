@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../utils/axios';
 import { jwtDecode } from 'jwt-decode';
 
 const problems = {

@@ -40,7 +40,8 @@ export default function Dashboard() {
           🧠 Dashboard
         </h1>
         <p className="text-lg text-gray-300">
-          Welcome to your secure dashboard! 🎯
+          Welcome to your secure dashboard!🎯 
+
         </p>
 
         {user && (

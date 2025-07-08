@@ -8,8 +8,29 @@ import ProblemSolve from './pages/ProblemSolve';
 import Progress from './pages/Progress';
 import UnsolvedProblems from './pages/UnsolvedProblems';
 import Header from './components/Header';
+import { useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
+
 
 function App() {
+  useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      const isExpired = decoded.exp * 1000 < Date.now();
+      if (isExpired) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+    } catch (err) {
+      console.error('Invalid token');
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+  }
+}, []);
+
   return (
     <Router>
       <Header />
