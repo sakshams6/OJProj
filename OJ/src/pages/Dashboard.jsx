@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { LogOut, User, Mail, ArrowRightCircle } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState({ name: '', email: '' });
+  const { darkMode } = useTheme();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -13,7 +16,6 @@ export default function Dashboard() {
         const decoded = jwtDecode(token);
         setUser(decoded);
       } catch (err) {
-        console.error('Invalid token:', err);
         localStorage.removeItem('token');
         navigate('/login');
       }
@@ -28,48 +30,85 @@ export default function Dashboard() {
   };
 
   const sections = [
-    { title: '1. Problem List', path: '/problems' },
-    { title: '2. Your Progress', path: '/progress' },
-    { title: '3. Unsolved Problems', path: '/unsolved' },
+    { title: 'Problem List', path: '/problems' },
+    { title: 'Your Progress', path: '/progress' },
+    { title: 'Unsolved Problems', path: '/unsolved' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-neutral-900 to-gray-900 flex items-center justify-center text-white px-6">
-      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-10 shadow-2xl text-center max-w-xl w-full space-y-6">
-        <h1 className="text-4xl font-bold underline underline-offset-8 decoration-pink-400">
-          🧠 Dashboard
-        </h1>
-        <p className="text-lg text-gray-300">
-          Welcome to your secure dashboard!🎯 
+    <div className={`min-h-screen flex items-center justify-center px-4 ${
+      darkMode ? 'bg-black text-white' : 'bg-white text-black'
+    }`}>
+      <div className="relative w-full max-w-2xl">
+        
+        <div className="absolute inset-0 rounded-3xl p-[2px] bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 blur-sm opacity-60 z-0" />
 
-        </p>
+       
+        <div className={`relative z-10 rounded-3xl p-8 space-y-6 backdrop-blur-md transition-all duration-300 border shadow-xl ${
+          darkMode
+            ? 'bg-black/80 border-white/10'
+            : 'bg-white border-gray-200'
+        }`}>
+          <h1 className={`text-4xl font-bold tracking-wide ${
+            darkMode ? 'text-white' : 'text-black'
+          }`}>
+            🧠 <span className="underline underline-offset-8 decoration-pink-500">Dashboard</span>
+          </h1>
 
-        {user && (
-          <div className="bg-white/10 border border-white/20 rounded-xl p-4 text-left text-white space-y-2">
-            <p><span className="font-semibold">👤 Name:</span> {user.name}</p>
-            <p><span className="font-semibold">📧 Email:</span> {user.email}</p>
-          </div>
-        )}
+          <p className={`text-base ${
+            darkMode ? 'text-gray-300' : 'text-gray-700'
+          }`}>
+            Welcome to your Dahboard — track your progress and dive into solving problems! 🚀
+          </p>
 
-        {/* 🔹 Section Navigation */}
-        <ul className="text-left text-white space-y-3 mt-6">
-          {sections.map((sec, idx) => (
-            <li
-              key={idx}
-              onClick={() => navigate(sec.path)}
-              className="cursor-pointer hover:text-pink-300 text-lg transition-colors"
+          
+          <div className={`rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border ${
+            darkMode ? 'bg-black border-white/10' : 'bg-white border-gray-200'
+          }`}>
+            <div className="space-y-1">
+              <p className={`flex items-center gap-2 ${
+                darkMode ? 'text-white' : 'text-gray-700'
+              }`}>
+                <User className="text-pink-500" size={18} />
+                <span className="font-semibold">Name:</span> {user.name}
+              </p>
+              <p className={`flex items-center gap-2 ${
+                darkMode ? 'text-white' : 'text-gray-700'
+              }`}>
+                <Mail className="text-blue-500" size={18} />
+                <span className="font-semibold">Email:</span> {user.email}
+              </p>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="px-5 py-2 bg-red-500 rounded-lg font-medium text-white hover:scale-105 border shadow  transition flex items-center gap-2"
             >
-              {sec.title}
-            </li>
-          ))}
-        </ul>
+              <LogOut size={18} />
+              Logout
+            </button>
+          </div>
 
-        <button
-          onClick={handleLogout}
-          className="mt-6 px-6 py-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg text-white font-semibold hover:from-red-600 hover:to-pink-600 transition transform hover:scale-105"
-        >
-          Logout
-        </button>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {sections.map((sec, idx) => (
+              <div
+                key={idx}
+                onClick={() => navigate(sec.path)}
+                className={`rounded-xl p-4 cursor-pointer transition-all hover:scale-105 border shadow ${
+                  darkMode 
+                    ? 'bg-black hover:bg-gray-900 border-white/10 text-white'
+                    : 'bg-gray-200 hover:bg-gray-300 border-gray-300 text-black'
+                }`}
+              >
+                <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
+                  {sec.title}
+                  <ArrowRightCircle className="text-pink-500" size={18} />
+                </h3>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

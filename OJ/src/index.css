@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
-.neon-text {
-  color: #39FF14; 
+
+body {
+  @apply bg-white text-black dark:bg-black dark:text-white transition-colors duration-300;
 }

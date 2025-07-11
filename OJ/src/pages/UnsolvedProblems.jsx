@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from '../utils/axios';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const problems = {
   '1': { title: 'Two Sum', difficulty: 'Easy', tags: ['Array', 'HashMap'] },
@@ -15,17 +16,11 @@ const problems = {
   '10': { title: 'Maximal Rectangle', difficulty: 'Hard', tags: ['Matrix', 'DP', 'Stack'] }
 };
 
-
-const difficultyColors = {
-  Easy: 'text-green-400 border-green-500',
-  Medium: 'text-yellow-300 border-yellow-400',
-  Hard: 'text-red-400 border-red-500',
-};
-
 export default function UnsolvedProblems() {
   const [solved, setSolved] = useState([]);
   const [unsolved, setUnsolved] = useState([]);
   const navigate = useNavigate();
+  const { darkMode } = useTheme();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -50,36 +45,65 @@ export default function UnsolvedProblems() {
     fetchProfile();
   }, []);
 
+  const difficultyColors = (level) => {
+    const base = 'text-xs font-medium inline-block px-2 py-1 rounded-full border';
+    if (darkMode) {
+      return {
+        Easy: `${base} text-green-400 border-green-500`,
+        Medium: `${base} text-yellow-300 border-yellow-400`,
+        Hard: `${base} text-red-400 border-red-500`,
+      }[level];
+    } else {
+      return {
+        Easy: `${base} text-green-700 border-green-400 bg-green-100`,
+        Medium: `${base} text-yellow-800 border-yellow-400 bg-yellow-100`,
+        Hard: `${base} text-red-700 border-red-400 bg-red-100`,
+      }[level];
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-neutral-900 to-gray-900 text-white p-8">
+    <div className={`pt-20 min-h-screen transition-colors duration-300 px-4 sm:px-6 md:px-10 ${
+      darkMode ? 'bg-black text-white' : 'bg-white text-black'
+    }`}>
       <h1 className="text-4xl font-bold mb-8 underline underline-offset-8 decoration-pink-400">
-         Unsolved Problems:
+        Unsolved Problems:
       </h1>
 
       {unsolved.length === 0 ? (
-        <p className="text-gray-400">🎉 You’ve solved all the problems!</p>
+        <p className="text-gray-500 dark:text-gray-400">🎉 You’ve solved all the problems!</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10">
           {unsolved.map((id) => {
             const problem = problems[id];
             return (
               <div
                 key={id}
-                className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition shadow-md"
+                className={`rounded-xl p-6 transition hover:scale-[1.015] shadow-md border cursor-pointer ${
+                  darkMode
+                    ? 'bg-white/5 border-white/10 hover:bg-white/10'
+                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                }`}
               >
-                <h2 className="text-xl font-semibold text-pink-300 mb-1">
+                <h2 className={`text-xl font-semibold mb-2 ${
+                  darkMode ? 'text-pink-300' : 'text-purple-800'
+                }`}>
                   {problem.title}
                 </h2>
 
-                <p className={`text-sm font-medium inline-block mb-2 px-2 py-1 border rounded-full ${difficultyColors[problem.difficulty]}`}>
+                <p className={difficultyColors(problem.difficulty)}>
                   {problem.difficulty}
                 </p>
 
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex flex-wrap gap-2 mt-3">
                   {problem.tags.map((tag, idx) => (
                     <span
                       key={idx}
-                      className="text-xs bg-white/10 px-2 py-1 rounded-full text-white border border-white/10"
+                      className={`text-xs px-2 py-1 rounded-full border ${
+                        darkMode
+                          ? 'bg-white/10 text-white border-white/10'
+                          : 'bg-gray-200 text-gray-700 border-gray-300'
+                      }`}
                     >
                       #{tag}
                     </span>

@@ -80,8 +80,8 @@ export default function Register() {
   const passwordStrength = getPasswordStrength(formData.password);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background */}
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
+      
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply opacity-20 animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply opacity-20 animate-pulse animation-delay-2000"></div>
@@ -89,7 +89,7 @@ export default function Register() {
         <div className="absolute bottom-1/3 right-1/3 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply opacity-20 animate-pulse animation-delay-6000"></div>
       </div>
 
-      {/* Floating Particles */}
+     
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(25)].map((_, i) => (
           <div
@@ -105,7 +105,7 @@ export default function Register() {
         ))}
       </div>
 
-      {/* Main Form */}
+      
       <div className="relative z-10 w-full max-w-lg">
         <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl transform transition-all duration-300 hover:scale-105">
           <div className="text-center mb-8 flex flex-col items-center">
@@ -118,7 +118,7 @@ export default function Register() {
             <p className="text-gray-300">Create your account and start coding</p>
           </div>
 
-          {/* 🔴 Error Message */}
+          
           {errorMsg && (
             <div className="mb-4 text-red-400 bg-white/10 border border-red-500 rounded-md px-4 py-2 text-sm text-center">
               {errorMsg}
@@ -132,7 +132,7 @@ export default function Register() {
 
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {/* First & Last Name */}
+            
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-gray-300 mb-2 block">First Name</label>
@@ -156,7 +156,7 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Email */}
+            
             <div>
               <label className="text-sm text-gray-300 mb-2 block">Email Address</label>
               <input
@@ -168,7 +168,7 @@ export default function Register() {
               />
             </div>
 
-            {/* Password */}
+            
             <div>
               <label className="text-sm text-gray-300 mb-2 block">Password</label>
               <div className="relative">
@@ -187,7 +187,7 @@ export default function Register() {
                   {showPassword ? '🔐' : '🔓'}
                 </button>
               </div>
-              {/* Strength */}
+              
               {formData.password && (
                 <div className="mt-2">
                   <div className="w-full bg-white/10 h-1.5 rounded-full">
@@ -204,7 +204,7 @@ export default function Register() {
               )}
             </div>
 
-            {/* Confirm Password */}
+            
             <div>
               <label className="text-sm text-gray-300 mb-2 block">Confirm Password</label>
               <div className="relative">
@@ -229,7 +229,7 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Terms */}
+            
             <div className="flex items-start space-x-3">
               <input
                 type="checkbox"
@@ -242,7 +242,7 @@ export default function Register() {
               </label>
             </div>
 
-            {/* Submit */}
+            
             <button
               type="submit"
               disabled={isLoading || !agreedToTerms}
@@ -252,7 +252,7 @@ export default function Register() {
             </button>
           </form>
 
-          {/* Sign In Redirect */}
+          
           <div className="mt-8 text-center">
             <p className="text-gray-300">
               Already have an account?{' '}
@@ -263,13 +263,13 @@ export default function Register() {
           </div>
         </div>
 
-        {/* Footer */}
+        
         <div className="text-center mt-8 text-gray-400 text-sm">
           <p>&copy; 2025 OJ Platform. Secure coding environment.</p>
         </div>
       </div>
 
-      {/* CSS */}
+      
       <style jsx>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }

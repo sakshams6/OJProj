@@ -4,7 +4,7 @@ const { registerUser, loginUser } = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
 const User = require('../models/User');
 
-// Public routes
+
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 
@@ -45,7 +45,7 @@ router.post('/solved', authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Get all solved problems
+
 router.get('/solved', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('solvedProblems');

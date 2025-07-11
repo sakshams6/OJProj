@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class', 
   content: [
     "./index.html",
     "./src/**/*.{js,jsx}",
@@ -13,7 +14,7 @@ export default {
         },
       },
       animation: {
-        float: 'float 8s ease-in-out infinite', // slow floating
+        float: 'float 8s ease-in-out infinite',
       },
     },
   },

@@ -87,7 +87,7 @@ async function handleResults({ results, allPassed }, userId, problemId, code, fi
   const passedCount = results.filter(r => r.passed).length;
   const totalCount = results.length;
 
-  // Save submission to user history
+ 
   try {
     await User.findByIdAndUpdate(userId, {
       $push: {
@@ -104,7 +104,7 @@ async function handleResults({ results, allPassed }, userId, problemId, code, fi
     console.error('⚠️ Error saving submission:', saveErr);
   }
 
-  // Cleanup files
+ 
   if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
   if (binary && fs.existsSync(binary)) fs.unlinkSync(binary);
 
