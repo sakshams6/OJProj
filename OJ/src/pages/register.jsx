@@ -53,7 +53,7 @@ export default function Register() {
     setErrorMsg('');
 
     try {
-      const res = await axios.post('http://localhost:5050/api/register', {
+      const res = await axios.post('/register', {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         password: formData.password,

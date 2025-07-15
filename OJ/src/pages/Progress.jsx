@@ -31,7 +31,7 @@ export default function ProgressPage() {
       if (!token) return;
 
       try {
-        const res = await axios.get('http://localhost:5050/api/profile', {
+        const res = await axios.get('/profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
 

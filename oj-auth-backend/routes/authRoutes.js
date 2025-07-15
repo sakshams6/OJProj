@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { registerUser, loginUser } = require('../controllers/authController');
-const authMiddleware = require('../middleware/authMiddleware');
-const User = require('../models/User');
+const authMiddleware = require('../middleware/authmiddleware');
+const User = require('../models/user');
 
 
 router.post('/register', registerUser);
@@ -29,6 +29,10 @@ router.post('/solved', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
 
+    if (!user) {
+      return res.status(404).json({ success: false, msg: 'User not found' });
+    }
+
     if (action === 'add') {
       if (!user.solvedProblems.includes(problemId)) {
         user.solvedProblems.push(problemId);
@@ -46,13 +50,20 @@ router.post('/solved', authMiddleware, async (req, res) => {
 });
 
 
+
 router.get('/solved', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('solvedProblems');
+
+    if (!user) {
+      return res.status(404).json({ success: false, msg: 'User not found' });
+    }
+
     res.json({ success: true, solvedProblems: user.solvedProblems });
   } catch (err) {
     res.status(500).json({ success: false, msg: 'Server Error' });
   }
 });
+
 
 module.exports = router;

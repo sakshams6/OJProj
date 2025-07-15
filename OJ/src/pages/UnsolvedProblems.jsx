@@ -28,7 +28,7 @@ export default function UnsolvedProblems() {
       if (!token) return navigate('/login');
 
       try {
-        const res = await axios.get('http://localhost:5050/api/profile', {
+        const res = await axios.get('/profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const solvedIds = res.data.user.solvedProblems || [];

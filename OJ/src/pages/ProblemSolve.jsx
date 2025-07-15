@@ -157,175 +157,153 @@ export default function ProblemSolve() {
   }, [language]);
 
   const fetchSolvedStatus = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const res = await axios.get('http://localhost:5050/api/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      const solved = res.data.user.solvedProblems || [];
-      setIsSolved(solved.includes(id));
-    } catch (err) {
-      console.error('Error fetching solved status:', err);
-    }
-  };
-
-  const markAsSolved = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'http://localhost:5050/api/solved',
-        { problemId: id, action: 'add' },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setIsSolved(true);
-    } catch (err) {
-      console.error('Error marking as solved:', err);
-    }
-  };
-
-  const markAsUnsolved = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'http://localhost:5050/api/solved',
-        { problemId: id, action: 'remove' },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setIsSolved(false);
-    } catch (err) {
-      console.error('Error marking as unsolved:', err);
-    }
-  };
-
-  const runCode = async () => {
-    try {
-      setOutput('⌛ Running...');
-      const res = await axios.post('http://localhost:5050/api/compile', {
-        code,
-        input: customInput,
-        language
-      });
-      setOutput(res.data.output || 'No output');
-    } catch (err) {
-      console.error('Error running code:', err);
-      setOutput(`❌ Error: ${err.response?.data?.error || err.message || 'Unknown error during execution'}`);
-    }
-  };
-
-  const handleCodeReview = async () => {
-    try {
-      setLoadingReview(true);
-      const res = await axios.post('/code-review', {
-        code,
-        language: language || 'cpp',
-      });
-      setReview(res.data.review);
-    } catch (err) {
-      setReview('Failed to get review');
-      console.error(err);
-    } finally {
-      setLoadingReview(false);
-    }
-  };
-
-  const handleHint = async () => {
-    try {
-      setLoadingHint(true);
-      const res = await axios.post('/get-hint', {
-        problemTitle: problem.title,
-        problemDescription: problem.description,
-        userCode: code,
-      });
-      setHint(res.data.hint);
-    } catch (err) {
-      setHint('Failed to get hint');
-      console.error(err);
-    } finally {
-      setLoadingHint(false);
-    }
-  };
-
-  const submitCode = async () => {
-    try {
-      setSubmitting(true);
-      setOutput('⌛ Submitting...');
-      
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setOutput('❌ Please log in to submit code.');
-        return;
-      }
-
-      const res = await axios.post(
-        'http://localhost:5050/api/submit',
-        { code, problemId: id, language },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (!res.data || !Array.isArray(res.data.details)) {
-        throw new Error('Invalid response format from server');
-      }
-
-      const resultOutput = (
-        <div>
-          <p className={`${darkMode ? 'text-green-300' : 'text-green-600'} font-semibold mb-2`}>
-            {res.data.allPassed ? '✅ All tests passed!' : `✅ Passed ${res.data.passed}/${res.data.total} test cases`}
-          </p>
-          {res.data.details.map((test, i) => (
-            <div key={i} className={`mb-4 p-4 rounded-lg border text-sm ${
-              test.passed
-                ? darkMode
-                  ? 'border-green-500 bg-green-900/20 text-green-300'
-                  : 'border-green-500 bg-green-100 text-green-800'
-                : darkMode
-                  ? 'border-red-500 bg-red-900/20 text-red-300'
-                  : 'border-red-500 bg-red-100 text-red-800'
-            }`}>
-              <p className="font-bold mb-1">Test Case {i + 1}</p>
-              <p><strong>Input:</strong> {test.input || 'N/A'}</p>
-              <p><strong>Expected:</strong> {test.expected || 'N/A'}</p>
-              <p><strong>Got:</strong> {test.output || 'N/A'}</p>
-              <p className="mt-1 font-medium">
-                Result: <span>{test.passed ? '✅ Passed' : '❌ Failed'}</span>
-              </p>
-            </div>
-          ))}
-        </div>
-      );
-
-      setOutput(resultOutput);
-
-      if (res.data.allPassed) {
-        await markAsSolved();
-      }
-    } catch (err) {
-      console.error('❌ Submission Error:', err);
-      setOutput(`❌ ${err.response?.data?.msg || err.message || 'Error during submission'}`);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className={`min-h-screen pt-20 flex items-center justify-center ${darkMode ? 'bg-black' : 'bg-white'}`}>
-        <p className={`text-xl ${darkMode ? 'text-white' : 'text-black'}`}>Loading problem...</p>
-      </div>
-    );
+  try {
+    const res = await axios.get('/profile');
+    const solved = res.data.user.solvedProblems || [];
+    setIsSolved(solved.includes(id));
+  } catch (err) {
+    console.error('Error fetching solved status:', err);
   }
+};
 
-  if (error || !problem) {
-    return (
-      <div className={`min-h-screen pt-20 flex items-center justify-center ${darkMode ? 'bg-black' : 'bg-white'}`}>
-        <p className={`text-xl ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
-          {error || 'Problem not found'}
+const markAsSolved = async () => {
+  try {
+    await axios.post('/solved', { problemId: id, action: 'add' });
+    setIsSolved(true);
+  } catch (err) {
+    console.error('Error marking as solved:', err);
+  }
+};
+
+const markAsUnsolved = async () => {
+  try {
+    await axios.post('/solved', { problemId: id, action: 'remove' });
+    setIsSolved(false);
+  } catch (err) {
+    console.error('Error marking as unsolved:', err);
+  }
+};
+
+const runCode = async () => {
+  try {
+    setOutput('⌛ Running...');
+    const res = await axios.post('/compile', {
+      code,
+      input: customInput,
+      language
+    });
+    setOutput(res.data.output || 'No output');
+  } catch (err) {
+    console.error('Error running code:', err);
+    setOutput(`❌ Error: ${err.response?.data?.error || err.message || 'Unknown error during execution'}`);
+  }
+};
+
+const handleCodeReview = async () => {
+  try {
+    setLoadingReview(true);
+    const res = await axios.post('/code-review', {
+      code,
+      language: language || 'cpp',
+    });
+    setReview(res.data.review);
+  } catch (err) {
+    setReview('Failed to get review');
+    console.error(err);
+  } finally {
+    setLoadingReview(false);
+  }
+};
+
+const handleHint = async () => {
+  try {
+    setLoadingHint(true);
+    const res = await axios.post('/get-hint', {
+      problemTitle: problem.title,
+      problemDescription: problem.description,
+      userCode: code,
+    });
+    setHint(res.data.hint);
+  } catch (err) {
+    setHint('Failed to get hint');
+    console.error(err);
+  } finally {
+    setLoadingHint(false);
+  }
+};
+
+const submitCode = async () => {
+  try {
+    setSubmitting(true);
+    setOutput('⌛ Submitting...');
+
+    const res = await axios.post('/submit', {
+      code,
+      problemId: id,
+      language
+    });
+
+    if (!res.data || !Array.isArray(res.data.details)) {
+      throw new Error('Invalid response format from server');
+    }
+
+    const resultOutput = (
+      <div>
+        <p className={`${darkMode ? 'text-green-300' : 'text-green-600'} font-semibold mb-2`}>
+          {res.data.allPassed ? '✅ All tests passed!' : `✅ Passed ${res.data.passed}/${res.data.total} test cases`}
         </p>
+        {res.data.details.map((test, i) => (
+          <div key={i} className={`mb-4 p-4 rounded-lg border text-sm ${
+            test.passed
+              ? darkMode
+                ? 'border-green-500 bg-green-900/20 text-green-300'
+                : 'border-green-500 bg-green-100 text-green-800'
+              : darkMode
+                ? 'border-red-500 bg-red-900/20 text-red-300'
+                : 'border-red-500 bg-red-100 text-red-800'
+          }`}>
+            <p className="font-bold mb-1">Test Case {i + 1}</p>
+            <p><strong>Input:</strong> {test.input || 'N/A'}</p>
+            <p><strong>Expected:</strong> {test.expected || 'N/A'}</p>
+            <p><strong>Got:</strong> {test.output || 'N/A'}</p>
+            <p className="mt-1 font-medium">
+              Result: <span>{test.passed ? '✅ Passed' : '❌ Failed'}</span>
+            </p>
+          </div>
+        ))}
       </div>
     );
+
+    setOutput(resultOutput);
+
+    if (res.data.allPassed) {
+      await markAsSolved();
+    }
+  } catch (err) {
+    console.error('❌ Submission Error:', err);
+    setOutput(`❌ ${err.response?.data?.msg || err.message || 'Error during submission'}`);
+  } finally {
+    setSubmitting(false);
   }
+};
+
+if (loading) {
+  return (
+    <div className={`min-h-screen pt-20 flex items-center justify-center ${darkMode ? 'bg-black' : 'bg-white'}`}>
+      <p className={`text-xl ${darkMode ? 'text-white' : 'text-black'}`}>Loading problem...</p>
+    </div>
+  );
+}
+
+if (error || !problem) {
+  return (
+    <div className={`min-h-screen pt-20 flex items-center justify-center ${darkMode ? 'bg-black' : 'bg-white'}`}>
+      <p className={`text-xl ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+        {error || 'Problem not found'}
+      </p>
+    </div>
+  );
+}
 
   return (
     <div className={`min-h-screen pt-20 flex flex-col md:flex-row transition-colors duration-300 ${darkMode ? 'bg-black text-white' : 'bg-white text-black'}`}>
