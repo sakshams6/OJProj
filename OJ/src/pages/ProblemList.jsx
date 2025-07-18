@@ -58,7 +58,7 @@ export default function ProblemList() {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
         {filteredProblems.map(problem => {
-          const isSolved = solvedProblems.includes(Number(problem.id));
+          const isSolved = solvedProblems.includes((problem.id));
 
           return (
             <div
