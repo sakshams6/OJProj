@@ -3,7 +3,7 @@ import axios from 'axios';
 // Create an axios instance
 const instance = axios.create({
   // Use the actual public IP/domain of your backend API on AWS
-  baseURL: 'http://api.algoarena.space/api'
+   baseURL: 'https://api.algoarena.space/api'
 });
 
 // This part is correct and should stay
