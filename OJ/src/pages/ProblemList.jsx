@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useSubmissions } from '../context/SubmissionsContext';
 
 const allProblems = [
   { id: '1', title: '1. Two Sum', difficulty: 'Easy' },
@@ -16,33 +17,11 @@ const allProblems = [
 ];
 
 export default function ProblemList() {
-  const [solvedProblems, setSolvedProblems] = useState([]);
+  const { solvedProblems } = useSubmissions();
+  
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const { darkMode } = useTheme();
-
-  useEffect(() => {
-    const fetchSolvedProblems = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      try {
-        const res = await fetch('http://localhost:5050/api/solved', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          setSolvedProblems(data.solvedProblems);
-        }
-      } catch (err) {
-        console.error('Failed to fetch solved problems:', err);
-      }
-    };
-
-    fetchSolvedProblems();
-  }, []);
+  
 
   const filteredProblems = allProblems.filter(problem =>
     selectedDifficulty === 'All' ? true : problem.difficulty === selectedDifficulty
@@ -79,7 +58,7 @@ export default function ProblemList() {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
         {filteredProblems.map(problem => {
-          const isSolved = solvedProblems.includes(problem.id);
+          const isSolved = solvedProblems.includes(Number(problem.id));
 
           return (
             <div

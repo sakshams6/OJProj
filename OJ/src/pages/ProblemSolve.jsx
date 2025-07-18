@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import axios from '../utils/axios';
 import {jwtDecode} from 'jwt-decode';
 import { useTheme } from '../context/ThemeContext';
+import { useSubmissions } from '../context/SubmissionsContext';
 
 const problems = {
   '1': {
@@ -139,6 +140,7 @@ export default function ProblemSolve() {
   const [hint, setHint] = useState('');
   const [loadingReview, setLoadingReview] = useState(false);
   const [loadingHint, setLoadingHint] = useState(false);
+  const { addSolvedProblem } = useSubmissions();
 
   useEffect(() => {
     const selected = problems[id];
@@ -276,8 +278,10 @@ const submitCode = async () => {
 
     setOutput(resultOutput);
 
-    if (res.data.allPassed) {
-      await markAsSolved();
+   if (res.data.allPassed) {
+        // 3. Instead of calling markAsSolved(), do this:
+        await axios.post('/solved', { problemId: id, action: 'add' }); // Update backend
+        addSolvedProblem(id); // Update shared frontend state
     }
   } catch (err) {
     console.error('❌ Submission Error:', err);
